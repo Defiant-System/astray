@@ -1,6 +1,6 @@
 <Application>
 	<Build>
-		<task action1="skip" source="src/js/bundle.js" destination="public/js/bundle.js"/>
+		<task action="skip" source="src/js/bundle.js" destination="public/js/bundle.js"/>
 	</Build>
 	<Head>
 		<meta name="id" value="astray"/>
@@ -8,7 +8,7 @@
 		<meta name="author" value="Rye Terrell" namespace="ant" ported="Hakan Bilgin"/>
 		<meta name="license" value="AGPL-3.0"/>
 		<meta name="width" value="760"/>
-		<meta name="height" value="500"/>
+		<meta name="height" value="600"/>
 		<meta name="top" value="180"/>
 		<meta name="left" value="180"/>
 		<meta name="minimize"/>
