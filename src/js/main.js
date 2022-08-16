@@ -10,7 +10,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.set(1, 1, 5);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
 scene.add(ambientLight);
 
 const pointLight = new THREE.PointLight(0xffffff, 1);
@@ -26,7 +26,6 @@ let loader = new THREE.TextureLoader(),
 		plane: { path: "~/img/concrete.png" },
 		ball:  { path: "~/img/ball.png" },
 	},
-	keyAxis = [0, 0],
 	ballMesh,
 	ballRadius = 0.25,
 	mazeDimension = 11,
@@ -44,15 +43,20 @@ let loader = new THREE.TextureLoader(),
 	wWorld,
 	wBall;
 
+var power = 0.015;
+var velocityX = 1;
+var velocityY = 1;
+var velocityZ = 1;
 var bounciness = 0.9;
 var gravity = 0.2;
-var velocityX = 1; //Math.cos(angleRad) * power;
-var velocityY = 1; //Math.sin(angleRad) * power;
-var velocityZ = 1;
 var ballCircumference = Math.PI * ballRadius * 2;
 var ballVelocity = new THREE.Vector3();
 var ballRotationAxis = new THREE.Vector3();
+var borders = [2, 3] //indicate where the ball needs to move in mirror position
+var keyAxis = [0, 0];
 
+// let tempMat = new THREE.Matrix4();
+// console.log( tempMat.multiplyMatrices );
 
 const astray = {
 	init() {
@@ -73,8 +77,6 @@ const astray = {
 			el;
 		switch (event.type) {
 			// system events
-			case "window.open":
-				break;
 			case "window.keystroke":
 				switch (event.keyCode) {
 					case 37: keyAxis = [-1, 0]; break;  // left
@@ -84,7 +86,7 @@ const astray = {
 				}
 				break;
 			case "open-help":
-				defiant.shell("fs -u '~/help/index.md'");
+				karaqu.shell("fs -u '~/help/index.md'");
 				break;
 			// custom events
 			case "init-level":
@@ -142,7 +144,7 @@ const astray = {
 		scene.add(ballMesh);
 
 		// Add the ground
-		let planeGeo = new THREE.PlaneGeometry(mazeDimension + 2, mazeDimension + 2, mazeDimension, mazeDimension);
+		let planeGeo = new THREE.PlaneGeometry(mazeDimension + 12, mazeDimension + 12, mazeDimension, mazeDimension);
 		let planeMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
 		let planeMesh = new THREE.Mesh (planeGeo, planeMat);
 		planeMesh.position.set((mazeDimension-1)/2, (mazeDimension-1)/2, 0);
@@ -181,26 +183,30 @@ const astray = {
 		wWorld.Step(1/60, 8, 3);
 	},
 	updateRenderWorld() {
-		// Update ball position.
-		var stepX = wBall.GetPosition().x - ballMesh.position.x;
-		var stepY = wBall.GetPosition().y - ballMesh.position.y;
+		let vX = wBall.GetPosition().x - ballMesh.position.x,
+			vY = wBall.GetPosition().y - ballMesh.position.y;
 
-		ballMesh.position.x += stepX;
-		ballMesh.position.y += stepY;
-		ballMesh.position.z += velocityZ;
+		// add velocity to ball
+		ballMesh.position.x += vX;
+		ballMesh.position.y += vY;
 
-		if (ballMesh.position.z < ballRadius) {
+		// handle boucing effect
+		if (ballMesh.position.z < 1) {
 			velocityZ *= -bounciness;
-			ballMesh.position.z = ballRadius;
 		}
 
-		ballVelocity.set(stepX, stepY, velocityZ);
-		ballRotationAxis.set(0, 0, ballRadius).cross(ballVelocity).normalize();
+		// Figure out the rotation based on the velocity and radius of the ball...
+		ballVelocity.set(vX, vY, velocityZ);
+		ballRotationAxis.set(0, 0, 1).cross(ballVelocity).normalize();
+		var velocityMag = ballVelocity.length();
+		var rotationAmount = velocityMag / ballCircumference;
+		// ballMesh.rotateOnWorldAxis(ballRotationAxis, rotationAmount);
 
-		let velocityMag = ballVelocity.length();
-		let rotationAmount = velocityMag * (Math.PI * 2) / ballCircumference;
-		ballMesh.rotateOnWorldAxis(ballRotationAxis, rotationAmount);
-		
+		ballMesh.rotation.x += ballRotationAxis.x * velocityMag;
+		ballMesh.rotation.y += ballRotationAxis.y * velocityMag;
+		// ballMesh.rotation.x += .008;
+
+		// reduce ball height with gravity
 		velocityZ -= gravity;
 
 		// Update camera and light positions.
