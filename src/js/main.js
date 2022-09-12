@@ -168,11 +168,11 @@ const astray = {
 	updatePhysicsWorld() {
 		// Apply "friction". 
 		var lv = wBall.GetLinearVelocity();
-		lv.Multiply(0.95);
+		lv.Multiply(0.975);
 		wBall.SetLinearVelocity(lv);
 		
 		// Apply user-directed force.
-		var f = new b2Vec2(keyAxis[0]*wBall.GetMass()*0.25, keyAxis[1]*wBall.GetMass()*0.25);
+		var f = new b2Vec2(keyAxis[0]*wBall.GetMass()*0.95, keyAxis[1]*wBall.GetMass()*0.95);
 		wBall.ApplyImpulse(f, wBall.GetPosition());          
 		keyAxis = [0,0];
 
