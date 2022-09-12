@@ -17628,7 +17628,7 @@ THREE.WebGLRenderer = function(a) {
         }
         return 0
     }
-    console.log("THREE.WebGLRenderer", THREE.REVISION);
+    // console.log("THREE.WebGLRenderer", THREE.REVISION);
     var a = a || {},
         E = a.canvas !== void 0 ? a.canvas : document.createElement("canvas"),
         z = a.precision !== void 0 ? a.precision : "highp",
