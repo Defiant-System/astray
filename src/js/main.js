@@ -58,36 +58,49 @@ const astray = {
 		switch (event.type) {
 			// system events
 			case "window.keystroke":
-				switch (event.keyCode) {
-					case 37: keyAxis = [-1, 0]; break;  // left
-					case 39: keyAxis = [1,  0]; break;  // right
-					case 38: keyAxis = [0,  1]; break;  // up
-					case 40: keyAxis = [0, -1]; break;  // down
+				if (gameState === "play") {
+					switch (event.keyCode) {
+						case 37: keyAxis = [-1, 0]; break;  // left
+						case 39: keyAxis = [1,  0]; break;  // right
+						case 38: keyAxis = [0,  1]; break;  // up
+						case 40: keyAxis = [0, -1]; break;  // down
+					}
 				}
 				break;
 			case "window.focus":
-				gameState = true;
+				gameState = "play";
 				// resume loop
 				Self.animate();
 				break;
 			case "window.blur":
-				gameState = false;
+				gameState = "pause";
 				break;
 			case "open-help":
 				karaqu.shell("fs -u '~/help/index.md'");
 				break;
 			// custom events
+			case "close-congratulations":
 			case "init-level":
+				Self.content.removeClass("maze-solved");
+				
 				maze = Maze.generate(mazeDimension);
 				maze[mazeDimension-1][mazeDimension-2] = false;
-
-				gameState = true;
+				// set game state to playing
+				gameState = "play";
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
-
 				// start loop
 				Self.animate();
+
+				// temp
+				// setTimeout(() => Self.dispatch({ type: "level-solved" }), 300);
+				break;
+			case "level-solved":
+				// set game state to paused
+				gameState = "pause";
+
+				Self.content.addClass("maze-solved");
 				break;
 		}
 	},
@@ -215,14 +228,24 @@ const astray = {
 		light.position.y = camera.position.y;
 		light.position.z = camera.position.z - 3.7;
 	},
+	checkForVictory() {
+		// Check for victory.
+		var mazeX = Math.floor(ballMesh.position.x + 0.5);
+		var mazeY = Math.floor(ballMesh.position.y + 0.5);
+		if (mazeX == mazeDimension && mazeY == mazeDimension - 2) { 
+			mazeDimension += 2;
+			astray.dispatch({ type: "level-solved" });
+		}
+	},
 	animate() {
 		let Self = astray;
-		if (!gameState) return;
+		if (gameState === "pause") return;
 
 		Self.updatePhysicsWorld();
 		Self.updateRenderWorld();
-
 		renderer.render(scene, camera);
+
+		Self.checkForVictory();
 
 		requestAnimationFrame(Self.animate);
 	}
