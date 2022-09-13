@@ -15,7 +15,8 @@ pointLight.position.set(1, 1, 1.3);
 scene.add(ambientLight);
 scene.add(pointLight);
 
-let ironTexture   = THREE.ImageUtils.loadTexture("~/img/ball.png"),
+let Keys = {},
+	ironTexture   = THREE.ImageUtils.loadTexture("~/img/ball.png"),
 	planeTexture  = THREE.ImageUtils.loadTexture("~/img/concrete.png"),
 	brickTexture  = THREE.ImageUtils.loadTexture("~/img/brick.png"),
 	gameState     = undefined,
@@ -28,7 +29,6 @@ let ironTexture   = THREE.ImageUtils.loadTexture("~/img/ball.png"),
 	planeMesh     = undefined,
 	ballMesh      = undefined,
 	ballRadius    = 0.25,
-	keyAxis       = [0, 0],
 	// Box2D shortcuts
 	b2World        = Box2D.Dynamics.b2World,
 	b2FixtureDef   = Box2D.Dynamics.b2FixtureDef,
@@ -60,17 +60,35 @@ const astray = {
 			case "window.keystroke":
 				if (gameState === "play") {
 					switch (event.keyCode) {
-						case 37: keyAxis = [-1, 0]; break;  // left
-						case 39: keyAxis = [1,  0]; break;  // right
-						case 38: keyAxis = [0,  1]; break;  // up
-						case 40: keyAxis = [0, -1]; break;  // down
+						case 65: // a
+						case 37: Keys.left = true; break;
+						case 68: // d
+						case 39: Keys.right = true; break;
+						case 87: // w
+						case 38: Keys.up = true; break;
+						case 83: // s
+						case 40: Keys.down = true; break;
+					}
+				}
+				break;
+			case "window.keyup":
+				if (gameState === "play") {
+					switch (event.keyCode) {
+						case 65: // a
+						case 37: Keys.left = false; break;
+						case 68: // d
+						case 39: Keys.right = false; break;
+						case 87: // w
+						case 38: Keys.up = false; break;
+						case 83: // s
+						case 40: Keys.down = false; break;
 					}
 				}
 				break;
 			case "window.focus":
 				gameState = "play";
 				// resume loop
-				Self.animate();
+				// Self.animate();
 				break;
 			case "window.blur":
 				gameState = "pause";
@@ -82,11 +100,17 @@ const astray = {
 			case "close-congratulations":
 			case "init-level":
 				Self.content.removeClass("maze-solved");
-				
+
 				maze = Maze.generate(mazeDimension);
 				maze[mazeDimension-1][mazeDimension-2] = false;
 				// set game state to playing
 				gameState = "play";
+
+				let level = Math.floor((mazeDimension-1)/2 - 4);
+				console.log( level );
+
+				// reset keys
+				Keys = {};
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
@@ -191,13 +215,19 @@ const astray = {
 	updatePhysicsWorld() {
 		// Apply "friction". 
 		var lv = wBall.GetLinearVelocity();
-		lv.Multiply(0.975);
+		lv.Multiply(0.95);
 		wBall.SetLinearVelocity(lv);
 		
+		let keyAxis = [0, 0];
+		if (Keys.left) keyAxis[0] = -1;
+		else if (Keys.right) keyAxis[0] = 1;
+		if (Keys.down) keyAxis[1] = -1;
+		else if (Keys.up) keyAxis[1] = 1;
+
 		// Apply user-directed force.
-		var f = new b2Vec2(keyAxis[0]*wBall.GetMass()*0.95, keyAxis[1]*wBall.GetMass()*0.95);
+		var f = new b2Vec2(keyAxis[0]*wBall.GetMass()*0.25, keyAxis[1]*wBall.GetMass()*0.25);
 		wBall.ApplyImpulse(f, wBall.GetPosition());          
-		keyAxis = [0,0];
+		// keyAxis = [0, 0];
 
 		// Take a time step.
 		wWorld.Step(1/60, 8, 3);
