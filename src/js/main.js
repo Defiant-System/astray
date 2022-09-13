@@ -19,6 +19,7 @@ let Keys = {},
 	ironTexture   = THREE.ImageUtils.loadTexture("~/img/ball.png"),
 	planeTexture  = THREE.ImageUtils.loadTexture("~/img/concrete.png"),
 	brickTexture  = THREE.ImageUtils.loadTexture("~/img/brick.png"),
+	gameLoop      = undefined,
 	gameState     = undefined,
 	light         = undefined,
 	mouseX        = undefined, 
@@ -86,12 +87,14 @@ const astray = {
 				}
 				break;
 			case "window.focus":
-				gameState = "play";
-				// resume loop
-				// Self.animate();
+				if (!Self.raf) {
+					// resume loop
+					Self.animate();
+				}
 				break;
 			case "window.blur":
-				gameState = "pause";
+				cancelAnimationFrame(Self.raf);
+				delete Self.raf;
 				break;
 			case "open-help":
 				karaqu.shell("fs -u '~/help/index.md'");
@@ -106,23 +109,31 @@ const astray = {
 				// set game state to playing
 				gameState = "play";
 
-				let level = Math.floor((mazeDimension-1)/2 - 4);
-				console.log( level );
+				// let level = Math.floor((mazeDimension-1)/2 - 4);
+				// console.log( level );
 
 				// reset keys
 				Keys = {};
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
-				// start loop
-				Self.animate();
+
+				if (!Self.raf) {
+					// start loop
+					Self.animate();
+				}
 
 				// temp
 				// setTimeout(() => Self.dispatch({ type: "level-solved" }), 300);
 				break;
 			case "level-solved":
-				// set game state to paused
-				gameState = "pause";
+				requestAnimationFrame(() => {
+					// set game state to paused
+					gameState = "pause";
+					
+					cancelAnimationFrame(Self.raf);
+					delete Self.raf;
+				});
 
 				Self.content.addClass("maze-solved");
 				break;
@@ -269,7 +280,7 @@ const astray = {
 	},
 	animate() {
 		let Self = astray;
-		if (gameState === "pause") return;
+		if (gameState !== "play") return;
 
 		Self.updatePhysicsWorld();
 		Self.updateRenderWorld();
@@ -277,7 +288,7 @@ const astray = {
 
 		Self.checkForVictory();
 
-		requestAnimationFrame(Self.animate);
+		Self.raf = requestAnimationFrame(Self.animate);
 	}
 };
 
