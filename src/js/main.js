@@ -36,7 +36,6 @@ let ironTexture   = THREE.ImageUtils.loadTexture("~/img/ball.png"),
 	b2Body		   = Box2D.Dynamics.b2Body,
 	b2CircleShape  = Box2D.Collision.Shapes.b2CircleShape,
 	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape,
-	b2Settings     = Box2D.Common.b2Settings,
 	b2Vec2         = Box2D.Common.Math.b2Vec2,
 	// Box2D world variables 
 	wWorld         = undefined,
@@ -55,6 +54,7 @@ const astray = {
 	dispatch(event) {
 		let Self = astray,
 			el;
+		// console.log(event);
 		switch (event.type) {
 			// system events
 			case "window.keystroke":
@@ -65,6 +65,14 @@ const astray = {
 					case 40: keyAxis = [0, -1]; break;  // down
 				}
 				break;
+			case "window.focus":
+				gameState = true;
+				// resume loop
+				Self.animate();
+				break;
+			case "window.blur":
+				gameState = false;
+				break;
 			case "open-help":
 				karaqu.shell("fs -u '~/help/index.md'");
 				break;
@@ -72,6 +80,8 @@ const astray = {
 			case "init-level":
 				maze = Maze.generate(mazeDimension);
 				maze[mazeDimension-1][mazeDimension-2] = false;
+
+				gameState = true;
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
@@ -207,13 +217,14 @@ const astray = {
 	},
 	animate() {
 		let Self = astray;
+		if (!gameState) return;
 
 		Self.updatePhysicsWorld();
 		Self.updateRenderWorld();
 
 		renderer.render(scene, camera);
 
-		requestAnimationFrame(astray.animate);
+		requestAnimationFrame(Self.animate);
 	}
 };
 
