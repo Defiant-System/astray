@@ -59,32 +59,6 @@ const astray = {
 		// console.log(event);
 		switch (event.type) {
 			// system events
-			case "gamepad.connected": break;
-			case "gamepad.disconnected": break;
-			case "gamepad.down": break;
-			case "gamepad.up":
-				if (event.button === "b0" && Self.content.hasClass("maze-solved")) {
-					Self.dispatch({ type: "close-congratulations" });
-				}
-				break;
-			case "gamepad.stick":
-				// reset input
-				Keys.left =
-				Keys.right =
-				Keys.up =
-				Keys.down = false;
-
-				if (event.value[0] !== 0) {
-					value = event.value[0] > 0;
-					Keys.left = !value;
-					Keys.right = value;
-				}
-				if (event.value[1] !== 0) {
-					value = event.value[1] > 0;
-					Keys.up = !value;
-					Keys.down = value;
-				}
-				break;
 			case "window.keystroke":
 				if (gameState === "play") {
 					switch (event.keyCode) {
@@ -111,6 +85,30 @@ const astray = {
 						case 83: // s
 						case 40: Keys.down = false; break;
 					}
+				}
+				break;
+			// gamepad support
+			case "gamepad.up":
+				if (event.button === "b0" && Self.content.hasClass("maze-solved")) {
+					Self.dispatch({ type: "close-congratulations" });
+				}
+				break;
+			case "gamepad.stick":
+				// reset input
+				Keys.left =
+				Keys.right =
+				Keys.up =
+				Keys.down = false;
+
+				if (event.value[0] !== 0) {
+					value = event.value[0] > 0;
+					Keys.left = !value;
+					Keys.right = value;
+				}
+				if (event.value[1] !== 0) {
+					value = event.value[1] > 0;
+					Keys.up = !value;
+					Keys.down = value;
 				}
 				break;
 			case "window.focus":
