@@ -59,10 +59,9 @@ const astray = {
 		// console.log(event);
 		switch (event.type) {
 			// system events
-			case "gamepad.connected":
-			case "gamepad.disconnected":
-			case "gamepad.down":
-				break;
+			case "gamepad.connected": break;
+			case "gamepad.disconnected": break;
+			case "gamepad.down": break;
 			case "gamepad.up":
 				if (event.button === "b0" && Self.content.hasClass("maze-solved")) {
 					Self.dispatch({ type: "close-congratulations" });
