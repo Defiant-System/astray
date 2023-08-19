@@ -54,10 +54,38 @@ const astray = {
 	},
 	dispatch(event) {
 		let Self = astray,
+			value,
 			el;
 		// console.log(event);
 		switch (event.type) {
 			// system events
+			case "gamepad.connected":
+			case "gamepad.disconnected":
+			case "gamepad.down":
+				break;
+			case "gamepad.up":
+				if (event.button === "b0" && Self.content.hasClass("maze-solved")) {
+					Self.dispatch({ type: "close-congratulations" });
+				}
+				break;
+			case "gamepad.stick":
+				// reset input
+				Keys.left =
+				Keys.right =
+				Keys.up =
+				Keys.down = false;
+
+				if (event.value[0] !== 0) {
+					value = event.value[0] > 0;
+					Keys.left = !value;
+					Keys.right = value;
+				}
+				if (event.value[1] !== 0) {
+					value = event.value[1] > 0;
+					Keys.up = !value;
+					Keys.down = value;
+				}
+				break;
 			case "window.keystroke":
 				if (gameState === "play") {
 					switch (event.keyCode) {
@@ -122,9 +150,6 @@ const astray = {
 					// start loop
 					Self.animate();
 				}
-
-				// temp
-				// setTimeout(() => Self.dispatch({ type: "level-solved" }), 300);
 				break;
 			case "level-solved":
 				requestAnimationFrame(() => {
