@@ -50,6 +50,19 @@ const astray = {
 		// add renderer canvas to window body
 		this.content.append(renderer.domElement);
 
+		// create FPS controller
+		this.fpsControl = karaqu.FpsControl({
+			fps: 60,
+			callback() {
+				let Self = astray;
+				Self.updatePhysicsWorld();
+				Self.updateRenderWorld();
+				renderer.render(scene, camera);
+
+				Self.checkForVictory();
+			}
+		});
+
 		this.dispatch({ type: "init-level" });
 	},
 	dispatch(event) {
@@ -112,14 +125,10 @@ const astray = {
 				}
 				break;
 			case "window.focus":
-				if (!Self.raf) {
-					// resume loop
-					Self.animate();
-				}
+				Self.fpsControl.start();
 				break;
 			case "window.blur":
-				cancelAnimationFrame(Self.raf);
-				delete Self.raf;
+				Self.fpsControl.stop();
 				break;
 			case "open-help":
 				karaqu.shell("fs -u '~/help/index.md'");
@@ -142,20 +151,13 @@ const astray = {
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
-
-				if (!Self.raf) {
-					// start loop
-					Self.animate();
-				}
+				Self.fpsControl.start();
 				break;
 			case "level-solved":
-				requestAnimationFrame(() => {
-					// set game state to paused
-					gameState = "pause";
-					
-					cancelAnimationFrame(Self.raf);
-					delete Self.raf;
-				});
+				Self.fpsControl.stop();
+
+				// set game state to paused
+				gameState = "pause";
 
 				Self.content.addClass("maze-solved");
 				break;
@@ -299,18 +301,6 @@ const astray = {
 			mazeDimension += 2;
 			astray.dispatch({ type: "level-solved" });
 		}
-	},
-	animate() {
-		let Self = astray;
-		if (gameState !== "play") return;
-
-		Self.updatePhysicsWorld();
-		Self.updateRenderWorld();
-		renderer.render(scene, camera);
-
-		Self.checkForVictory();
-
-		Self.raf = requestAnimationFrame(Self.animate);
 	}
 };
 
