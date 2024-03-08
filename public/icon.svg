@@ -1,7 +1,7 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
 	<style type="text/css">
-		.st0{fill:url(#SVGID_1_);stroke:#000000;stroke-miterlimit:10;}
+		.st0{fill:url(#SVGID_1_);stroke:#000000;stroke-width:1.25;stroke-miterlimit:10;filter:url(#defapp-filter-1);}
 		.st1{fill:#DD7F03;stroke:#000000;stroke-width:0.25;stroke-miterlimit:10;}
 		.st2{fill:#EEEEEE;stroke:#000000;stroke-width:0.25;stroke-miterlimit:10;}
 		.st3{fill:none;stroke:#000000;stroke-width:0.25;stroke-miterlimit:10;}
@@ -12,6 +12,15 @@
 		.st8{fill:#757575;stroke:#000000;stroke-width:0.2;stroke-miterlimit:10;}
 		.st9{fill:url(#SVGID_2_);}
 	</style>
+	<filter filterUnits="objectBoundingBox" id="defapp-filter-1">
+		<feOffset dx="0" dy="1.5" in="SourceAlpha" result="defappShadowOffsetOuter1"></feOffset>
+		<feGaussianBlur stdDeviation="1.25" in="defappShadowOffsetOuter1" result="defappShadowBlurOuter1"></feGaussianBlur>
+		<feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 .5 0" type="matrix" in="defappShadowBlurOuter1" result="defappShadowMatrixOuter1"></feColorMatrix>
+		<feMerge>
+			<feMergeNode in="defappShadowMatrixOuter1"/>
+			<feMergeNode in="SourceGraphic"/>
+		</feMerge>
+	</filter>
 	<radialGradient id="SVGID_1_" cx="27.5" cy="29.7062" r="24.4535" fx="27.4371" fy="34.3322" gradientTransform="matrix(1 0 0 -1 0 55.8898)" gradientUnits="userSpaceOnUse">
 		<stop  offset="0" style="stop-color:#FFFFFF"/>
 		<stop  offset="0.1992" style="stop-color:#FBF9F8"/>
