@@ -16,7 +16,7 @@ scene.add(ambientLight);
 scene.add(pointLight);
 
 let Keys = {},
-	ironTexture   = THREE.ImageUtils.loadTexture("~/img/ball.png"),
+	ironTexture   = THREE.ImageUtils.loadTexture("~/img/bb8.jpg"),
 	planeTexture  = THREE.ImageUtils.loadTexture("~/img/concrete.jpg"),
 	brickTexture  = THREE.ImageUtils.loadTexture("~/img/wall.jpg"),
 	gameLoop      = undefined,
