@@ -7,6 +7,6 @@
 	<Menu name="Help">
 		<Menu name="Help" click="open-help"/>
 		<Menu type="divider"/>
-		<Menu name="License"/>
+		<Menu name="License" shell="win -al"/>
 	</Menu>
 </MenuBar>
