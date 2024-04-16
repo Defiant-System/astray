@@ -52,7 +52,7 @@ const astray = {
 
 		// create FPS controller
 		this.fpsControl = karaqu.FpsControl({
-			fps: 60,
+			fps: 50,
 			callback() {
 				let Self = astray;
 				Self.updatePhysicsWorld();
