@@ -1,5 +1,5 @@
 
-const { Maze, Box2D, THREE } = await window.fetch("~/js/bundle.js");
+const { Maze, Box2D, Stats, THREE } = await window.fetch("~/js/bundle.js");
 
 let scene = new THREE.Scene();
 let ratio = window.innerWidth / window.innerHeight;
@@ -16,13 +16,13 @@ scene.add(ambientLight);
 scene.add(pointLight);
 
 let Keys = {},
-	ironTexture   = THREE.ImageUtils.loadTexture("~/img/bb8.jpg"),
+	ballTexture   = THREE.ImageUtils.loadTexture("~/img/bb8.jpg"),
 	planeTexture  = THREE.ImageUtils.loadTexture("~/img/concrete.jpg"),
 	brickTexture  = THREE.ImageUtils.loadTexture("~/img/wall.jpg"),
-	gameLoop      = undefined,
 	gameState     = undefined,
 	light         = undefined,
-	mouseX        = undefined, 
+	stats         = undefined,
+	mouseX        = undefined,
 	mouseY        = undefined,
 	maze          = undefined, 
 	mazeMesh      = undefined,
@@ -49,17 +49,23 @@ const astray = {
 		this.content = window.find("content");
 		// add renderer canvas to window body
 		this.content.append(renderer.domElement);
+		// add stats monitor
+		stats = new Stats();
+		stats.domElement.className = "stats";
+		this.content.append(stats.domElement);
+
+		let Self = this;
 
 		// create FPS controller
 		this.fpsControl = karaqu.FpsControl({
-			fps: 50,
+			fps: 60,
 			callback() {
-				let Self = astray;
 				Self.updatePhysicsWorld();
 				Self.updateRenderWorld();
 				renderer.render(scene, camera);
+				stats.update();
 
-				Self.checkForVictory();
+				// Self.checkForVictory();
 			}
 		});
 
@@ -222,7 +228,7 @@ const astray = {
 		
 		// Add the ball.
 		let g = new THREE.SphereGeometry(ballRadius, 32, 16);
-		let m = new THREE.MeshPhongMaterial({ map: ironTexture });
+		let m = new THREE.MeshPhongMaterial({ map: ballTexture });
 		ballMesh = new THREE.Mesh(g, m);
 		ballMesh.position.set(1, 1, ballRadius);
 		scene.add(ballMesh);

@@ -18,6 +18,8 @@ content {
 	left: 0;
 	right: 0;
 	bottom: 0;
+	border-radius: inherit;
+	overflow: hidden;
 
 	&.maze-solved {
 		.congratulations {
@@ -41,6 +43,12 @@ content {
 				}
 			}
 		}
+	}
+
+	.stats {
+		position: absolute;
+		top: 7px;
+		right: 7px;
 	}
 
 	.congratulations {
