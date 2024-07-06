@@ -1,13 +1,4 @@
 
-/* latin */
-@font-face {
-	font-family: 'Tangerine';
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: url(~/fonts/tangerine.woff2) format('woff2');
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
 
 background: #000;
 overflow: visible;
@@ -45,7 +36,133 @@ content {
 		}
 	}
 
+	.start-view {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		text-align: center;
+
+		.logo {
+			position: relative;
+			margin: 37px auto;
+			width: 445px;
+			height: 133px;
+
+			svg {
+				width: inherit;
+				height: inherit;
+				filter: drop-shadow(0 1px 1px hsl(114, 95%, 55%))
+						drop-shadow(0 2px 1px hsl(114, 95%, 45%))
+						drop-shadow(0 3px 1px hsl(114, 95%, 37%))
+						drop-shadow(0 4px 0 hsl(114, 95%, 29%))
+						drop-shadow(0 5px 0 hsl(114, 95%, 21%))
+						drop-shadow(0 6px 0 hsl(114, 95%, 17%))
+						// drop-shadow(0 0 5px rgba(#fff,.05))
+						// drop-shadow(0 1px 3px rgba(#fff,.1))
+						// drop-shadow(0 3px 5px rgba(#fff,.1))
+						drop-shadow(0 3px 11px rgba(#fff,.1))
+						drop-shadow(0 5px 11px rgba(#fff,.1))
+						drop-shadow(0 7px 21px rgba(#fff,.2))
+						sepia(1) saturate(4);
+			}
+		}
+
+		.controls {
+			font-family: BebasNeueRegular, sans-serif;
+			display: block;
+			background: rgba(#fff,.15);
+			backdrop-filter: blur(11px);
+			border-radius: 7px;
+			margin: 53px auto;
+			padding: 13px 0 7px;
+			width: 289px;
+			font-size: 29px;
+			color: #fff;
+
+			.row {
+				text-align: right;
+				margin-bottom: 13px;
+
+				span {
+					display: inline-block;
+					width: 153px;
+					padding: 5px 0 0 3px;
+					text-align: left;
+					text-transform: uppercase;
+					text-shadow: 0 2px 1px rgba(#000,.35);
+				}
+
+				.key {
+					background: #0ca5a5;
+					position: relative;
+					display: inline-block;
+					width: 37px;
+					height: 34px;
+					border-radius: 4px;
+					margin: 0 5px 0 0;
+					vertical-align: top;
+					box-shadow: 0px 5px 0px #198e8e,
+								0 1px 3px rgba(#000,.25),
+								0 5px 7px rgba(#000,.35);
+
+					&:before {
+						content: "";
+						position: absolute;
+						top: 5px;
+						left: 6px;
+						width: 25px;
+						height: 25px;
+						background-position: 50% 50%;
+						background-size: 100% auto;
+						background-repeat: no-repeat;
+						filter: drop-shadow(0 1px 1px rgba(#000,.75));
+					}
+
+					&:after {
+						content: "";
+						position: absolute;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						border-radius: inherit;
+						background-image: radial-gradient(ellipse at bottom center, #ffffff77, transparent);
+						pointer-events: none;
+					}
+
+					&.icon-p {
+						background: #383;
+						box-shadow: 0px 5px 0px #373,
+									0 3px 5px rgba(#000,.15),
+									0 15px 15px rgba(#000,.25);
+
+						&:before { opacity: .85; }
+					}
+
+					&.icon-escape {
+						background: #833;
+						box-shadow: 0px 5px 0px #844,
+									0 3px 5px rgba(#000,.15),
+									0 15px 15px rgba(#000,.25);
+
+						&:before { opacity: .7; }
+					}
+
+					&.icon-arrow-left:before  { background-image: url(~/icons/icon-arrow-left.png); }
+					&.icon-arrow-right:before { background-image: url(~/icons/icon-arrow-right.png); }
+					&.icon-arrow-up:before    { background-image: url(~/icons/icon-arrow-up.png); }
+					&.icon-arrow-down:before  { background-image: url(~/icons/icon-arrow-down.png); }
+					&.icon-p:before           { background-image: url(~/icons/icon-p.png); }
+					&.icon-escape:before      { background-image: url(~/icons/icon-escape.png); }
+				}
+			}
+		}
+	}
+
 	.stats {
+		display: none;
 		position: absolute;
 		top: 7px;
 		right: 7px;
@@ -204,3 +321,24 @@ content {
 		margin-left: 80%;
 	}
 }
+
+
+/* latin */
+@font-face {
+	font-family: 'Tangerine';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url(~/fonts/tangerine.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+// custom fonts
+@font-face {
+	font-family: "BebasNeueRegular";
+	font-style: normal;
+	font-weight: 400;
+	// font-display: swap;
+	src: url(~/fonts/BebasNeue-webfont.woff) format("woff2");
+}
+
