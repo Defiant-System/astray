@@ -54,21 +54,6 @@ const astray = {
 		stats.domElement.className = "stats";
 		this.content.append(stats.domElement);
 
-		let Self = this;
-
-		// create FPS controller
-		this.fpsControl = karaqu.FpsControl({
-			fps: 60,
-			callback() {
-				Self.updatePhysicsWorld();
-				Self.updateRenderWorld();
-				renderer.render(scene, camera);
-				stats.update();
-
-				// Self.checkForVictory();
-			}
-		});
-
 		this.dispatch({ type: "init-level" });
 	},
 	dispatch(event) {
@@ -157,7 +142,22 @@ const astray = {
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
-				Self.fpsControl.start();
+
+				// create FPS controller
+				Self.fpsControl = karaqu.FpsControl({
+					fps: 60,
+					autoplay: true,
+					callback() {
+						Self.updatePhysicsWorld();
+						Self.updateRenderWorld();
+						renderer.render(scene, camera);
+						stats.update();
+
+						Self.checkForVictory();
+					}
+				});
+
+				// Self.fpsControl.start();
 				break;
 			case "level-solved":
 				Self.fpsControl.stop();
