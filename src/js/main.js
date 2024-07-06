@@ -19,7 +19,7 @@ let Keys = {},
 	ballTexture   = THREE.ImageUtils.loadTexture("~/img/bb8.jpg"),
 	planeTexture  = THREE.ImageUtils.loadTexture("~/img/concrete.jpg"),
 	brickTexture  = THREE.ImageUtils.loadTexture("~/img/wall.jpg"),
-	gameState     = undefined,
+	gameState     = "pause",
 	light         = undefined,
 	stats         = undefined,
 	mouseX        = undefined,
@@ -79,6 +79,17 @@ const astray = {
 		switch (event.type) {
 			// system events
 			case "window.keystroke":
+				if (!Self.content.hasClass("maze-solved") && event.char === "esc") {
+					if (gameState === "pause") {
+						gameState = "play";
+						Self.fpsControl.start();
+						Self.content.data({ show: "game" });
+					} else {
+						gameState = "pause";
+						Self.fpsControl.stop();
+						Self.content.data({ show: "start" });
+					}
+				}
 				if (gameState === "play") {
 					switch (event.keyCode) {
 						case 65: // a
@@ -146,8 +157,6 @@ const astray = {
 
 				maze = Maze.generate(mazeDimension);
 				maze[mazeDimension-1][mazeDimension-2] = false;
-				// set game state to playing
-				gameState = "play";
 
 				// let level = Math.floor((mazeDimension-1)/2 - 4);
 				// console.log( level );
@@ -157,11 +166,15 @@ const astray = {
 
 				Self.createPhysicsWorld();
 				Self.createRenderWorld();
-
-				// Self.started = true;
 				Self.fpsControl.start();
 
-				setTimeout(() => Self.fpsControl.stop(), 1e3);
+				if (event.type === "init-level") {
+					// this is to render initial for start-view bg
+					setTimeout(() => Self.fpsControl.stop(), 1e3);
+				} else {
+					// set game state to playing
+					gameState = "play";
+				}
 				break;
 			case "level-solved":
 				Self.fpsControl.stop();
