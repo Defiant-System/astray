@@ -142,10 +142,10 @@ const astray = {
 				}
 				break;
 			case "window.focus":
-				if (Self.started) Self.fpsControl.start();
+				if (gameState === "play") Self.fpsControl.start();
 				break;
 			case "window.blur":
-				if (Self.started) Self.fpsControl.stop();
+				if (gameState === "play") Self.fpsControl.stop();
 				break;
 			case "open-help":
 				karaqu.shell("fs -u '~/help/index.md'");
