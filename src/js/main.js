@@ -79,17 +79,6 @@ const astray = {
 		switch (event.type) {
 			// system events
 			case "window.keystroke":
-				if (!Self.content.hasClass("maze-solved") && event.char === "esc") {
-					if (gameState === "pause") {
-						gameState = "play";
-						Self.fpsControl.start();
-						Self.content.data({ show: "game" });
-					} else {
-						gameState = "pause";
-						Self.fpsControl.stop();
-						Self.content.data({ show: "start" });
-					}
-				}
 				if (gameState === "play") {
 					switch (event.keyCode) {
 						case 65: // a
@@ -101,6 +90,9 @@ const astray = {
 						case 83: // s
 						case 40: Keys.down = true; break;
 					}
+				}
+				if (event.char === "esc") {
+					Self.dispatch({ type: "toggle-pause" });
 				}
 				break;
 			case "window.keyup":
@@ -174,6 +166,8 @@ const astray = {
 				} else {
 					// set game state to playing
 					gameState = "play";
+					// show karaqu gamepad/joystick (at center bottom)
+					karaqu.joystick({ theme: "dark", center: "stick" });
 				}
 				break;
 			case "level-solved":
@@ -181,8 +175,27 @@ const astray = {
 
 				// set game state to paused
 				gameState = "pause";
+				// hide karaqu gamepad/joystick
+				karaqu.joystick();
 
 				Self.content.addClass("maze-solved");
+				break;
+			case "toggle-pause":
+				if (!Self.content.hasClass("maze-solved")) {
+					if (gameState === "pause") {
+						gameState = "play";
+						Self.fpsControl.start();
+						Self.content.data({ show: "game" });
+						// show karaqu gamepad/joystick (at center bottom)
+						karaqu.joystick({ theme: "dark", center: "stick" });
+					} else {
+						gameState = "pause";
+						Self.fpsControl.stop();
+						Self.content.data({ show: "start" });
+						// hide karaqu gamepad/joystick
+						karaqu.joystick();
+					}
+				}
 				break;
 		}
 	},
