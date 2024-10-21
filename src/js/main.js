@@ -59,9 +59,9 @@ const astray = {
 		// create FPS controller
 		this.fpsControl = karaqu.FpsControl({
 			fps: 60,
-			callback() {
-				Self.updatePhysicsWorld();
-				Self.updateRenderWorld();
+			callback(time, delta) {
+				Self.updatePhysicsWorld(delta);
+				Self.updateRenderWorld(delta);
 				renderer.render(scene, camera);
 				stats.update();
 
@@ -162,7 +162,7 @@ const astray = {
 
 				if (event.type === "init-level") {
 					// this is to render initial for start-view bg
-					setTimeout(() => Self.fpsControl.stop(), 1e3);
+					setTimeout(() => Self.fpsControl.stop(), 300);
 				} else {
 					// set game state to playing
 					gameState = "play";
@@ -283,7 +283,7 @@ const astray = {
 		planeMesh.rotation.set(Math.PI/2, 0, 0);
 		scene.add(planeMesh);                
 	},
-	updatePhysicsWorld() {
+	updatePhysicsWorld(delta) {
 		// Apply "friction". 
 		var lv = wBall.GetLinearVelocity();
 		lv.Multiply(0.95);
@@ -296,14 +296,15 @@ const astray = {
 		else if (Keys.up) keyAxis[1] = 1;
 
 		// Apply user-directed force.
-		var f = new b2Vec2(keyAxis[0]*wBall.GetMass()*0.25, keyAxis[1]*wBall.GetMass()*0.25);
+		var d = 0.25 * (delta / 20);
+		var f = new b2Vec2(keyAxis[0] * wBall.GetMass() * d, keyAxis[1] * wBall.GetMass() * d);
 		wBall.ApplyImpulse(f, wBall.GetPosition());          
 		// keyAxis = [0, 0];
 
 		// Take a time step.
 		wWorld.Step(1/60, 8, 3);
 	},
-	updateRenderWorld() {
+	updateRenderWorld(delta) {
 		// Update ball position.
 		var stepX = wBall.GetPosition().x - ballMesh.position.x;
 		var stepY = wBall.GetPosition().y - ballMesh.position.y;
